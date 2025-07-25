@@ -1,0 +1,150 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Painel Geral - Sistema Irriga+</h2>
+
+  <!-- Cards de Indicadores -->
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-header">Pivôs Ativos</div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ num_pivos_ativos or 0 }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-header">Área Plantada (ha)</div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ area_plantada or 0 }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-header">Eficiência Média</div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ eficiencia_media or 0 }}%</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-info mb-3">
+        <div class="card-header">Demanda Hídrica</div>
+        <div class="card-body text-center">
+          <h5 class="card-title">{{ demanda_media or 0 }} mm/dia</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row">
+    <div class="col-md-6">
+      <canvas id="graficoCulturas"></canvas>
+    </div>
+    <div class="col-md-6">
+      <canvas id="graficoETcIrrigado"></canvas>
+    </div>
+  </div>
+
+  <!-- Tabela Resumo por Dia -->
+  <div class="mt-5">
+    <h4>Resumo dos últimos dias</h4>
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Data</th>
+          <th>Chuva (mm)</th>
+          <th>ETc (mm)</th>
+          <th>Irrigado (mm)</th>
+          <th>Saldo Hídrico</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dia in resumo_dias %}
+        <tr>
+          <td>{{ dia.data }}</td>
+          <td>{{ dia.chuva }}</td>
+          <td>{{ dia.etc }}</td>
+          <td>{{ dia.irrigado }}</td>
+          <td class="{{ 'text-success' if dia.saldo >= 0 else 'text-danger' }}">
+            {{ dia.saldo }} mm
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Alertas -->
+  <div class="mt-4">
+    <h4>Alertas Recentes</h4>
+    {% for alerta in alertas %}
+      <div class="alert alert-{{ alerta.tipo }}" role="alert">
+        <strong>{{ alerta.titulo }}</strong>: {{ alerta.mensagem }}
+      </div>
+    {% else %}
+      <div class="alert alert-secondary">Nenhum alerta recente.</div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Importa gráficos e scripts personalizados -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+<!-- Script dos gráficos -->
+<script>
+  const ctxCulturas = document.getElementById('graficoCulturas').getContext('2d');
+  new Chart(ctxCulturas, {
+    type: 'bar',
+    data: {
+      labels: {{ culturas_labels|safe }},
+      datasets: [{
+        label: 'Area Plantada (ha)',
+        data: {{ culturas_valores|safe }},
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Distribuição de Área por Cultura' }
+      }
+    }
+  });
+
+  const ctxETc = document.getElementById('graficoETcIrrigado').getContext('2d');
+  new Chart(ctxETc, {
+    type: 'line',
+    data: {
+      labels: {{ dias_labels|safe }},
+      datasets: [
+        {
+          label: 'ETc (mm)',
+          data: {{ etc_dados|safe }},
+          borderColor: 'rgba(54, 162, 235, 1)',
+          fill: false
+        },
+        {
+          label: 'Irrigado (mm)',
+          data: {{ irrigado_dados|safe }},
+          borderColor: 'rgba(75, 192, 192, 1)',
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'ETc vs Água Irrigada - Últimos Dias' }
+      }
+    }
+  });
+</script>
+{% endblock %}

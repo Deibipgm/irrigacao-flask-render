@@ -1,0 +1,181 @@
+{% extends 'layout.html' %}
+
+{% block title %}Cadastro de Projetos {% endblock %}
+{% block titulo_pagina %}Cadastro de Projetos{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+<form action="/projeto" class="row g-3" method="POST">
+<div class="col-md-3">
+<label class="form-label" for="fazenda_id">Fazenda</label>
+<select class="form-select" id="fazenda" name="fazenda_id" required="">
+<option value="">Selecione</option>
+  {% for f in fazendas %}
+    <option value="{{ f.fazenda_id }}">{{ f.nome }}</option>
+  {% endfor %}
+</select>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="pivo_id">Pivô</label>
+<select class="form-select" id="pivo" name="pivo_id" required="">
+<option value="">Selecione</option>
+      {% for item in pivo_ids %}
+        <option value="{{ item.pivo_id_id }}">{{ item.nome }}</option>
+      {% endfor %}
+    </select>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="cultura_id">Cultura</label>
+<select class="form-select" id="cultura" name="cultura_id" required="">
+<option value="">Selecione</option>
+  {% for c in culturas %}
+    <option value="{{ c.cultura_id }}">{{ c.nome }}</option>
+  {% endfor %}
+</select>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="variedade">Variedade</label>
+<select class="form-select" id="variedade" name="variedade" required="">
+<option value="">Selecione</option>
+      {% for item in variedades %}
+        <option value="{{ item.variedade_id }}">{{ item.nome }}</option>
+      {% endfor %}
+    </select>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="safra">Safra</label>
+<input class="form-control" name="safra" required="" type="text"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="ciclo">Ciclo (dias)</label>
+<input class="form-control" name="ciclo" required="" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="data_inicio">Data de Início</label>
+<input class="form-control" name="data_inicio" required="" type="date"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="profundidade_cm">Profundidade (cm)</label>
+<input class="form-control" name="profundidade_cm" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="densidade_aparente">Densidade Aparente</label>
+<input class="form-control" name="densidade_aparente" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="cc_gg">Capacidade de Campo (g/g)</label>
+<input class="form-control" name="cc_gg" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="pmp_gg">Ponto de Murcha (g/g)</label>
+<input class="form-control" name="pmp_gg" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="saturacao_gg">Saturação (g/g)</label>
+<input class="form-control" name="saturacao_gg" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="fator_disponibilidade">Fator de Disponibilidade</label>
+<input class="form-control" name="fator_disponibilidade" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="cc_mm">CC (mm)</label>
+<input class="form-control" name="cc_mm" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="pm_mm">PM (mm)</label>
+<input class="form-control" name="pm_mm" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="sat_mm">SAT (mm)</label>
+<input class="form-control" name="sat_mm" step="any" type="number"/>
+</div>
+<div class="col-md-3">
+<label class="form-label" for="mi_mm">MI (mm)</label>
+<input class="form-control" name="mi_mm" step="any" type="number"/>
+</div>
+<div class="col-12 mt-4">
+<h5>Resultados do Cálculo</h5>
+<ul id="resultado_calculo">
+<li><strong>CC (mm):</strong> <span id="cc_resultado">-</span></li>
+<li><strong>PM (mm):</strong> <span id="pm_resultado">-</span></li>
+<li><strong>SAT (mm):</strong> <span id="sat_resultado">-</span></li>
+<li><strong>MI (mm):</strong> <span id="mi_resultado">-</span></li>
+</ul>
+</div>
+<div class="col-12 mb-3">
+<button class="btn btn-warning me-2" onclick="calcularParametros()" type="button">Calcular</button>
+<button class="btn btn-primary" type="submit">Salvar Projeto</button>
+</div>
+<script>
+        function calcularParametros() {
+            const profundidade = parseFloat(document.querySelector('[name=profundidade_cm]').value.replace(',', '.'));
+            const da = parseFloat(document.querySelector('[name=densidade_aparente]').value.replace(',', '.'));
+            const cc = parseFloat(document.querySelector('[name=cc_gg]').value.replace(',', '.'));
+            const pm = parseFloat(document.querySelector('[name=pmp_gg]').value.replace(',', '.'));
+            const sat = parseFloat(document.querySelector('[name=saturacao_gg]').value.replace(',', '.'));
+            const fd = parseFloat(document.querySelector('[name=fator_disponibilidade]').value.replace(',', '.'));
+
+            function resultado(v) {
+                return isNaN(v) ? 'Inválido' : v.toFixed(2).replace('.', ',');
+            }
+
+            const cc_mm = profundidade * da * cc;
+            const pm_mm = profundidade * da * pm;
+            const sat_mm = profundidade * da * sat;
+            const mi_mm = (cc_mm - pm_mm) * fd;
+
+            document.getElementById("cc_resultado").innerText = resultado(cc_mm);
+            document.getElementById("pm_resultado").innerText = resultado(pm_mm);
+            document.getElementById("sat_resultado").innerText = resultado(sat_mm);
+            document.getElementById("mi_resultado").innerText = resultado(mi_mm);
+
+            document.querySelector('[name=cc_mm]').value = isNaN(cc_mm) ? '' : cc_mm.toFixed(2);
+            document.querySelector('[name=pm_mm]').value = isNaN(pm_mm) ? '' : pm_mm.toFixed(2);
+            document.querySelector('[name=sat_mm]').value = isNaN(sat_mm) ? '' : sat_mm.toFixed(2);
+            document.querySelector('[name=mi_mm]').value = isNaN(mi_mm) ? '' : mi_mm.toFixed(2);
+        }
+        </script>
+<script>
+document.getElementById('fazenda').addEventListener('change', function () {
+  const fazendaId = this.value;
+  fetch('/api/pivos/' + fazendaId)
+    .then(r => r.json())
+    .then(pivos => {
+      const select = document.getElementById('pivo');
+      select.innerHTML = '<option value="">Selecione</option>';
+      pivos.forEach(p => {
+        select.innerHTML += `<option value="${p.id}">${p.nome}</option>`;
+      });
+    });
+});
+
+document.getElementById('cultura').addEventListener('change', function () {
+  const culturaId = this.value;
+  fetch('/api/variedades/' + culturaId)
+    .then(r => r.json())
+    .then(vs => {
+      const select = document.getElementById('variedade');
+      select.innerHTML = '<option value="">Selecione</option>';
+      vs.forEach(v => {
+        select.innerHTML += `<option value="${v.variedade}">${v.variedade}</option>`;
+      });
+    });
+});
+</script></form>
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
+        {{ message }}
+        <button class="btn-close" data-bs-dismiss="alert" type="button"></button>
+</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+{% endblock %}

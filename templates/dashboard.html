@@ -1,0 +1,43 @@
+
+{% extends 'layout.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block titulo_pagina %}Painel Geral - Sistema Irriga+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card text-white bg-success">
+        <div class="card-body text-center">
+          <h6 class="card-title">Pivôs Ativos</h6>
+          <h5 class="card-text">{{ ativos }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-primary">
+        <div class="card-body text-center">
+          <h6 class="card-title">Área Plantada (ha)</h6>
+          <h5 class="card-text">{{ area_ha }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-warning">
+        <div class="card-body text-center">
+          <h6 class="card-title">Eficiência Média</h6>
+          <h5 class="card-text">{{ eficiencia }}%</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card text-white bg-info">
+        <div class="card-body text-center">
+          <h6 class="card-title">Demanda Hídrica</h6>
+          <h5 class="card-text">{{ demanda_hidrica }} mm/dia</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

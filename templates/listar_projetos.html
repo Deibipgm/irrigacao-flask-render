@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+
+{% block title %}Cadastro de Projeto{% endblock %}
+{% block titulo_pagina %}Cadastro de Projeto{% endblock %}
+
+{% block content %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Projetos Cadastrados</h2>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fazenda</th>
+        <th>Pivô</th>
+        <th>Cultura</th>
+        <th>Safra</th>
+        <th>Data de Início</th>
+        <th>Variedade</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in projetos %}
+      <tr>
+        <td>{{ p.projeto_id }}</td>
+        <td>{{ p.fazenda_id }}</td>
+        <td>{{ p.pivo_id }}</td>
+        <td>{{ p.cultura_id }}</td>
+        <td>{{ p.safra }}</td>
+        <td>{{ p.data_inicio.strftime('%d/%m/%Y') }}</td>
+        <td>{{ p.variedade }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

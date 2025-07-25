@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+
+{% block title %}Registro Diário de Irrigação{% endblock %}
+{% block titulo_pagina %}Registro Diário de Irrigação{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+<form action="/irrigacao" method="POST">
+  <div class="row g-3">
+    <div class="col-md-3">
+      <label>Data</label>
+      <input class="form-control" name="data" required type="date"/>
+    </div>
+    <div class="col-md-3">
+      <label>Fazenda</label>
+      <select class="form-select" id="fazenda" name="fazenda" required>
+        <option value="">Selecione</option>
+        {% for f in fazendas %}
+        <option value="{{ f.fazenda_id }}">{{ f.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label>Pivô</label>
+      <select class="form-select" id="pivo" name="pivo" required>
+        <option value="">Selecione</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label>Cultura</label>
+      <select class="form-select" id="cultura" name="cultura" required>
+        <option value="">Selecione</option>
+        {% for c in culturas %}
+        <option value="{{ c.cultura_id }}">{{ c.nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label>Variedade</label>
+      <select class="form-select" id="variedade" name="variedade" required>
+        <option value="">Selecione</option>
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label>Ano Safra</label>
+      <input class="form-control" name="safra" type="text"/>
+    </div>
+    <div class="col-md-3">
+      <label>ET₀ (mm)</label>
+      <input class="form-control" name="et0_mm" step="any" type="number"/>
+    </div>
+    <div class="col-md-3">
+      <label>Chuva (mm)</label>
+      <input class="form-control" name="chuva_mm" step="any" type="number"/>
+    </div>
+    <div class="col-md-3">
+      <label>Irrigado (mm)</label>
+      <input class="form-control" name="irrigado_mm" step="any" type="number"/>
+    </div>
+  </div>
+  <div class="mt-4">
+    <button class="btn btn-primary" type="submit">Registrar</button>
+  </div>
+</form>
+</div>
+
+<script>
+document.getElementById('fazenda').addEventListener('change', function () {
+  const fazendaId = this.value;
+  fetch('/api/pivos/' + fazendaId)
+    .then(r => r.json())
+    .then(pivos => {
+      const select = document.getElementById('pivo');
+      select.innerHTML = '<option value="">Selecione</option>';
+      pivos.forEach(p => {
+        select.innerHTML += `<option value="${p.nome}">${p.nome}</option>`;
+      });
+    });
+});
+
+document.getElementById('cultura').addEventListener('change', function () {
+  const culturaId = this.value;
+  fetch('/api/variedades/' + culturaId)
+    .then(r => r.json())
+    .then(vs => {
+      const select = document.getElementById('variedade');
+      select.innerHTML = '<option value="">Selecione</option>';
+      vs.forEach(v => {
+        select.innerHTML += `<option value="${v.variedade}">${v.variedade}</option>`;
+      });
+    });
+});
+</script>
+{% endblock %}

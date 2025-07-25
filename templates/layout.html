@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Sistema Irrigação{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .sidebar {
+      width: 235px;
+      background-color: #05668D;
+      padding: 20px;
+      color: white;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .sidebar a {
+      display: block;
+      margin: 12px 0;
+      color: white;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      text-decoration: underline;
+    }
+    .sidebar .submenu a {
+      margin-left: 15px;
+      font-weight: 400;
+    }
+    h4 {
+      margin-bottom: 1.5rem;
+    }
+    .alert {
+      margin-top: 10px;
+    }
+    .navbar-custom {
+      background-color: #05668D;
+      color: white;
+      padding: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h4>Sistema Irrigação</h4>
+    <a href="/home">Início</a>
+
+    <a class="dropdown-toggle" data-bs-toggle="collapse" href="#cadastroMenu" role="button" aria-expanded="false" aria-controls="cadastroMenu">
+      Cadastro ▾
+    </a>
+    <div class="collapse submenu" id="cadastroMenu">
+      <a href="/fazenda">Cadastro Fazenda</a>
+      <a href="/cultura">Cadastro Cultura</a>
+      <a href="/projeto">Cadastro Projeto</a>
+    </div>
+
+    <a href="/irrigacao">Registro Irrigação</a>
+    <a href="/relatorios">Relatórios</a>
+  </div>
+
+  <div class="content">
+    <div class="navbar-custom">{% block titulo_pagina %}{% endblock %}</div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

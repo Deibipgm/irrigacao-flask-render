@@ -1,0 +1,60 @@
+
+{% extends 'layout.html' %}
+
+{% block title %} Relatórios {% endblock %}
+{% block titulo_pagina %}Relatórios do Sistema{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <form method="POST" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <label for="tipo_relatorio">Selecionar Relatório:</label>
+      <select class="form-select" name="tipo_relatorio" id="tipo_relatorio" required>
+        <option value="">Selecione</option>
+        <option value="irrigacao" {% if tipo_relatorio == 'irrigacao' %}selected{% endif %}>Irrigação</option>
+        <option value="projeto" {% if tipo_relatorio == 'projeto' %}selected{% endif %}>Projeto</option>
+      </select>
+    </div>
+    <div class="col-md-3 align-self-end">
+      <button type="submit" class="btn btn-primary">Selecionar</button>
+    </div>
+  </form>
+
+  {% if tipo_relatorio == 'irrigacao' %}
+    <form method="POST" action="/relatorios/irrigacao/excel">
+      <div class="row g-3 mb-3">
+        <div class="col-md-3">
+          <label for="fazenda_id">Fazenda</label>
+          <select class="form-select" name="fazenda_id">
+            <option value="">Todas</option>
+            {% for f in fazendas %}
+            <option value="{{ f.fazenda_id }}">{{ f.nome }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label>Safra</label>
+          <input type="text" name="safra" class="form-control" placeholder="Ex: 2024/2025">
+        </div>
+        <div class="col-md-3">
+          <label>Data Início</label>
+          <input type="date" name="data_inicio" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <label>Data Fim</label>
+          <input type="date" name="data_fim" class="form-control">
+        </div>
+        <div class="col-md-12 text-end">
+          <button type="submit" class="btn btn-success">Exportar Irrigação (Excel)</button>
+        </div>
+      </div>
+    </form>
+  {% elif tipo_relatorio == 'projeto' %}
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <a href="/relatorios/projeto/excel" class="btn btn-success">Exportar Projeto (Excel)</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
